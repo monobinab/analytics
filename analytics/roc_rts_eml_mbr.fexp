@@ -1,0 +1,31 @@
+/*Program: Fast Export Script for WWE Auto Entry Sweeps Project*/
+/*Author: msaha*/
+/*Create Date: 2/26/2014*/
+/************************************************************************/
+.LOGON TDAdhoc.intra.searshc.com/msaha,n745tzjax2;
+.logtable shc_work_tbls.roc_rts_eml_mbrs_log;
+
+.begin export sessions 16;
+
+.EXPORT MODE RECORD FORMAT TEXT OUTFILE /staging/roc_eml_02262015_tmp.txt;
+
+SEL
+trim(TRIM( TRAILING '.' FROM a.LYL_ID_NO))
+||'|'|| COALESCE(TRIM(a.OFR_CD), '')
+||'|'||coalesce(TRIM(a.SEND_DT), '')
+||'|'||coalesce(TRIM(a.OFR_DESC), '') 
+||'|'||COALESCE(TRIM(a.sponsor_bu), '')
+||'|'||coalesce(trim(a.fmt_cd), '')
+from shc_work_tbls.roc_rts_liquidity_eml_mbrs a
+;
+
+
+.END EXPORT;
+
+
+.SYSTEM 'cut -b3- /staging/roc_eml_02262015_tmp.txt > /staging/roc_eml_02262015.txt';
+
+
+
+.LOGOFF;
+

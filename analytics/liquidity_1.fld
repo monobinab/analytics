@@ -1,0 +1,41 @@
+LOGON TDAdhoc.intra.searshc.com/msaha,n745tzjax2;
+drop table shc_work_tbls.rts_liquidity_0324;
+CREATE SET TABLE shc_work_tbls.rts_liquidity_0324 ,NO FALLBACK ,
+     NO BEFORE JOURNAL,
+     NO AFTER JOURNAL,
+     CHECKSUM = DEFAULT
+     (
+      lyl_id_no varchar(20)
+      ,member_rank varchar(5)
+      ,model_name varchar(20)     
+)
+
+     PRIMARY INDEX ( lyl_id_no );
+
+DROP TABLE shc_work_tbls.rts_liquidity_0324_err1;
+DROP TABLE shc_work_tbls.rts_liquidity_0324_ERR2;
+ERRLIMIT 1;
+BEGIN LOADING
+    shc_work_tbls.rts_liquidity_0324
+    ERRORFILES
+     shc_work_tbls.rts_liquidity_0324_ERR1,
+     shc_work_tbls.rts_liquidity_0324_ERR2
+     CHECKPOINT 500000;
+
+SET RECORD vartext "	" DISPLAY_ERRORS NOSTOP;
+
+DEFINE
+       IN_lyl_id_no                 (varchar(20))
+      ,IN_member_rank              (varchar(5))
+      ,IN_model_name                 (varchar(20))
+      file = /staging/msaha/liquidity_offer.txt;
+INSERT INTO shc_work_tbls.rts_liquidity_0324
+values
+(
+:IN_lyl_id_no        
+,:IN_member_rank    
+,:IN_model_name         
+);
+
+END LOADING;
+LOGOFF;
